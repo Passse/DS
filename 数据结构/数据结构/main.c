@@ -67,42 +67,42 @@ void Operation(int s,int m,int w)
     }
 }
 
-void savefile()
-{
-    FILE*fp;
-    int i;
-    if((fp=fopen("file.txt","w"))==NULL)
-    {
-        printf("cannot open the file\n");
-        return;
-    }
-    for(i=0;i<N;i++)
-    {
-        if(Snode_a[i].snum!='\0')
-            if(fwrite(&Snode_a[i],sizeof(struct Snode),1,fp)!=1)
-            {
-                printf("file write error\n");
-                return;
-            }
-    }
-    fclose(fp);
-}
-
-void readfile()//读信息
-{
-    int i;
-    FILE *fp;
-    if((fp=fopen("file.txt","rb"))==NULL)
-    {
-        printf("cannot open the file\n");
-        return;
-    }
-    for(i=0;i<N;i++)
-    {
-        fread(&Snode_a[i],sizeof(struct Snode),1,fp);
-    }
-    fclose(fp);
-}
+//void savefile()
+//{
+//    FILE*fp;
+//    int i;
+//    if((fp=fopen("file.txt","w"))==NULL)
+//    {
+//        printf("cannot open the file\n");
+//        return;
+//    }
+//    for(i=0;i<N;i++)
+//    {
+//        if(Snode_a[i].snum!='\0')
+//            if(fwrite(&Snode_a[i],sizeof(struct Snode),1,fp)!=1)
+//            {
+//                printf("file write error\n");
+//                return;
+//            }
+//    }
+//    fclose(fp);
+//}
+//
+//void readfile()//读信息
+//{
+//    int i;
+//    FILE *fp;
+//    if((fp=fopen("file.txt","rb"))==NULL)
+//    {
+//        printf("cannot open the file\n");
+//        return;
+//    }
+//    for(i=0;i<N;i++)
+//    {
+//        fread(&Snode_a[i],sizeof(struct Snode),1,fp);
+//    }
+//    fclose(fp);
+//}
 
 void input(int s,int m,int w)
 {
@@ -133,7 +133,6 @@ void input(int s,int m,int w)
                         }
             printf("\n");
         }
-//        printf("\n\n");
     }
     
     for(i=0;i<s;i++)
@@ -204,14 +203,14 @@ void input(int s,int m,int w)
             }
         }
     }
-    savefile();
+//    savefile();
     menu();
     Operation(s,m,w);
 }
 
 void output(int s,int m,int w)
 {
-    readfile();
+//    readfile();
     int i;
     for(i=0;i<s;i++)
     {
@@ -224,7 +223,7 @@ void output(int s,int m,int w)
 
 void sort(int s,int m,int w)
 {
-    readfile();
+//    readfile();
     int i,j;
     int c2;
     int kg=1;
@@ -321,7 +320,7 @@ void sort(int s,int m,int w)
 
 void find(int s,int m,int w)
 {
-    readfile();
+//    readfile();
     int c1;
     int i,J,k,L,q=1;
     printf("Welcome to use the score inquiry system\n");
