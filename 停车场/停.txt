@@ -1,0 +1,184 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define N 9
+
+struct Car
+{
+    char operate;
+    int num;
+    int rtime;
+    int ctime;
+};
+typedef struct Car* C;
+
+struct Stop
+{
+    int MaxSize;
+    int Top_S;
+    C Data;
+};
+typedef struct Stop* Stack_S;
+
+struct Test
+{
+    C Data;
+    int MaxSize;
+    int Top_T;
+};
+typedef struct Test* Stack_T;
+
+struct Node
+{
+    C Data;
+    struct Node* next;
+};
+typedef struct Node* Position;
+struct QNode
+{
+    Position Front,Rear;
+    int MaxSize;
+};
+typedef struct QNode* QN;
+
+Stack_S CreateStack_S(int MaxSize)
+{
+    Stack_S S=(Stack_S)malloc(sizeof(struct Stop));
+    S->Data=(struct Car*)malloc(MaxSize*sizeof(struct Car));
+    S->MaxSize=MaxSize;
+    S->Top_S=-1;
+    return S;
+}
+
+Stack_T CreateStack_T(int MaxSize)
+{
+    Stack_T T=(Stack_T)malloc(sizeof(struct Test));
+    T->Data=(struct Car*)malloc(MaxSize*sizeof(struct Car));
+    T->MaxSize=MaxSize;
+    T->Top_T=-1;
+    return T;
+}
+
+QN CreateQ(int MaxSize)
+{
+    QN Q=(QN)malloc(sizeof(struct QNode));
+    Position p=(Position)malloc(sizeof(struct Node));
+    p->next=NULL;
+    Q->Front=Q->Rear=p;
+    return Q;
+}
+
+void add(struct QNode* QN,char operate,int num,int rtime)
+{
+    struct Node *n;
+    n=(struct Node *)malloc(sizeof(struct Node));
+    n->Data->operate=operate;
+    n->Data->num=num;
+    n->Data->rtime=rtime;
+    n->next=NULL;
+    QN->Rear->next=n;
+    QN->Rear=n;
+    printf("您已将车牌号为%d的车停入便道.",QN->Rear->Data->num);
+}
+
+void getinto(Stack_S S,struct QNode* QN,char operate,int num,int rtime)
+{
+    if(S->Top_S==S->MaxSize-1)
+    {
+        printf("现暂无车位，请移入场外便道等候.");
+        add(QN,operate,num,rtime);
+    }
+    else
+    {
+        S->Data[++(S->Top_S)].operate=operate;
+        S->Data[(S->Top_S)].num=num;
+        S->Data[(S->Top_S)].rtime=rtime;
+        printf("您可以在%d位置进行停车,车牌号为%d",S->Top_S+1,S->Data[S->Top_S].num);
+    }
+}
+
+void Ginto(Stack_S S,struct QNode* QN,int ctime)
+{
+    S->Data[++(S->Top_S)].operate=QN->Front->next->Data->operate;
+    S->Data[(S->Top_S)].num=QN->Front->next->Data->num;
+    S->Data[(S->Top_S)].ctime=QN->Front->next->Data->ctime;
+//    QN->Front=QN->Front->next;
+    if(QN->Front->next==QN->Rear)
+        QN->Rear=QN->Front;
+    QN->Front->next=QN->Front->next->next;
+    printf("车牌号为%d的车,已从便道进入停车场.",S->Data[(S->Top_S)].num);
+}
+void getout(Stack_S S,Stack_T T,struct QNode* QN,char operate,int num,int ctime)
+{
+    int i=0;
+    while(i<S->Top_S+1)
+    {
+        if(S->Data[i].num==num)
+        {
+            break;
+        }
+        i++;
+    }
+    S->Data[i].ctime=ctime;
+    while(S->Top_S>i)
+    {
+        T->Data[(S->Top_S)++]=S->Data[(S->Top_S)--];
+    }
+    int t=S->Top_S--;
+    printf("车牌号为%d的车辆,停车时间为%d,需缴费用%d元",S->Data[t].num,S->Data[t].ctime-S->Data[t].rtime,2*(S->Data[t].rtime-S->Data[t].ctime));
+    while(T->Top_T>=0)
+    {
+        S->Data[++(S->Top_S)]=T->Data[--(T->Top_T)];
+    }
+    if(QN->Front!=NULL)
+    {
+        Ginto(S,QN,ctime);
+    }
+}
+int main()
+{
+    int number;
+    char operate;
+    int num;
+    int time;
+    printf("请输入最大车位数:");
+    scanf("%d",&number);
+//    system("cls");
+    printf("----欢迎试用停车场管理系统----");
+    printf("\n\n");
+    printf("--停车场规则:\n");
+    printf("    1.该停车场共有%d个车位\n",number);
+    printf("    2.收费规则:停车时长*2");
+    printf("\n\n\n");
+    printf("--系统菜单:\n");
+    printf("    A:进入停车场\n");
+    printf("    D:离开停车场\n");
+    printf("    E:输入结束");
+    printf("\n");
+    getchar();
+    Stack_S S;
+    Stack_T ST;
+    QN Q;
+    S=CreateStack_S(number);
+    ST=CreateStack_T(number);
+    Q=CreateQ(number);
+    while(1)
+    {
+//        char c=getchar();
+        scanf("%c %d %d",&operate,&num,&time);
+        if(operate=='A')
+        {
+            getinto(S,Q,operate,num,time);
+        }
+        if(operate=='D')
+        {
+            getout(S,ST,Q,operate,num,time);
+        }
+        if(operate=='E')
+        {
+            printf("输入结束.\n");
+            break;
+        }
+    }
+    return 0;
+}
